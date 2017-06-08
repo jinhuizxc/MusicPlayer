@@ -1,6 +1,7 @@
 package com.example.jh.musicplayer.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Build;
@@ -14,11 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.jh.musicplayer.R;
+import com.example.jh.musicplayer.app.AppCache;
+import com.example.jh.musicplayer.service.PlayService;
+import com.example.jh.musicplayer.ui.activity.SplashActivity;
 import com.example.jh.musicplayer.utils.binding.ViewBinder;
 import com.example.jh.musicplayer.utils.permission.PermissionReq;
 
@@ -45,35 +50,21 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        // 设置监听
-        setListener();
-    }
-
-    protected void setListener() {
-    }
-
-    // 设置返回键？
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionReq.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         // 初始化布局
+        initView();
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        initView();
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        super.setContentView(view, params);
         initView();
     }
 
@@ -90,6 +81,34 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // 设置监听
+        setListener();
+    }
+
+    protected void setListener() {
+    }
+
+    public PlayService getPlayService() {
+        PlayService playService = AppCache.getPlayService();
+        if (playService == null) {
+            throw new NullPointerException("play service is null");
+        }
+        return playService;
+    }
+
+    // 检查服务时候存活
+    protected boolean checkServiceAlive() {
+        if (AppCache.getPlayService() == null) {
+            startActivity(new Intent(this, SplashActivity.class));
+            AppCache.clearStack();
+            return false;
+        }
+        return true;
+    }
+
     private void setSystemBarTransparent() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             // LOLLIPOP解决方案
@@ -100,6 +119,22 @@ public class BaseActivity extends AppCompatActivity {
             // KITKAT解决方案
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+    }
+
+    // 设置返回键？
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionReq.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     // 显示软键盘

@@ -25,7 +25,7 @@ public class ToastUtils {
     // 显示字符串
     public static void show(String text){
         if(sToast == null){
-            sToast = Toast.makeText(sContext,text, Toast.LENGTH_SHORT);
+            sToast = Toast.makeText(sContext, text, Toast.LENGTH_SHORT);
         }else {
             sToast.setText(text);
         }

@@ -6,6 +6,7 @@ package com.example.jh.musicplayer.executor;
  */
 
 public interface IExecutor<T> {
+
     void execute();
 
     void onPrepare();

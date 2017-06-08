@@ -1,26 +1,35 @@
-package com.example.jh.musicplayer.ui;
+package com.example.jh.musicplayer.ui.activity;
 
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jh.musicplayer.R;
 import com.example.jh.musicplayer.app.AppCache;
 import com.example.jh.musicplayer.base.BaseActivity;
+import com.example.jh.musicplayer.http.HttpCallback;
+import com.example.jh.musicplayer.http.HttpClient;
+import com.example.jh.musicplayer.model.Splash;
 import com.example.jh.musicplayer.service.PlayService;
+import com.example.jh.musicplayer.utils.FileUtils;
+import com.example.jh.musicplayer.utils.Preferences;
 import com.example.jh.musicplayer.utils.ToastUtils;
 import com.example.jh.musicplayer.utils.binding.Bind;
 import com.example.jh.musicplayer.utils.permission.PermissionReq;
 import com.example.jh.musicplayer.utils.permission.PermissionResult;
 
+import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -52,9 +61,9 @@ public class SplashActivity extends BaseActivity {
     private void checkService() {
         if (AppCache.getPlayService() == null) {
             startService();
-
-//            showSplash();
-//            updateSplash();
+            // 显示开机广告页
+            showSplash();
+            updateSplash();
 
             mHandler.postDelayed(new Runnable() {
                 @Override
@@ -73,6 +82,7 @@ public class SplashActivity extends BaseActivity {
         Intent intent = new Intent(this, PlayService.class);
         startService(intent);
     }
+
     // 绑定服务
     private void bindService() {
         Intent intent = new Intent();
@@ -80,6 +90,7 @@ public class SplashActivity extends BaseActivity {
         mPlayServiceConnection = new PlayServiceConnection();
         bindService(intent, mPlayServiceConnection, Context.BIND_AUTO_CREATE);
     }
+
     // 服务连接对象
     public class PlayServiceConnection implements ServiceConnection{
 
@@ -102,7 +113,7 @@ public class SplashActivity extends BaseActivity {
                         public void onDenied() {
                             ToastUtils.show(getString(R.string.no_permission, "存储空间", "扫描本地歌曲"));
                             finish();
-//                            playService.stop();
+                            playService.stop();
                         }
                     })
                     .request();
@@ -114,6 +125,50 @@ public class SplashActivity extends BaseActivity {
         }
     }
 
+    private void showSplash() {
+        File splashImg = new File(FileUtils.getSplashDir(this), SPLASH_FILE_NAME);
+        if (splashImg.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(splashImg.getPath());
+            ivSplash.setImageBitmap(bitmap);
+        }
+    }
+
+    private void updateSplash() {
+        HttpClient.getSplash(new HttpCallback<Splash>() {
+            @Override
+            public void onSuccess(Splash response) {
+                if (response == null || TextUtils.isEmpty(response.getUrl())) {
+                    return;
+                }
+
+                final String url = response.getUrl();
+                String lastImgUrl = Preferences.getSplashUrl();
+                if (TextUtils.equals(lastImgUrl, url)) {
+                    return;
+                }
+
+                HttpClient.downloadFile(url, FileUtils.getSplashDir(AppCache.getContext()), SPLASH_FILE_NAME,
+                        new HttpCallback<File>() {
+                            @Override
+                            public void onSuccess(File file) {
+                                Preferences.saveSplashUrl(url);
+                            }
+
+                            @Override
+                            public void onFail(Exception e) {
+                            }
+                        });
+            }
+
+            @Override
+            public void onFail(Exception e) {
+            }
+        });
+    }
+
+
+
+
     // 扫描音乐
     public void scanMusic(final PlayService playService){
         // 执行异步任务
@@ -121,7 +176,7 @@ public class SplashActivity extends BaseActivity {
 
             @Override
             protected Void doInBackground(Void... params) {
-//                playService.updateMusicList();
+                playService.updateMusicList();
                 return null;
             }
 
