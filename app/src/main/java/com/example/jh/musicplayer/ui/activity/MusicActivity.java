@@ -11,8 +11,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,8 +20,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.load.engine.Initializable;
 import com.example.jh.musicplayer.R;
 import com.example.jh.musicplayer.app.AppCache;
 import com.example.jh.musicplayer.base.BaseActivity;
@@ -42,8 +42,6 @@ import com.example.jh.musicplayer.utils.ToastUtils;
 import com.example.jh.musicplayer.utils.binding.Bind;
 import com.example.jh.musicplayer.utils.permission.PermissionReq;
 import com.example.jh.musicplayer.utils.permission.PermissionResult;
-
-import static com.example.jh.musicplayer.app.AppCache.getPlayService;
 
 /**
  * 打造一款音乐播放器，借鉴ponyMusic, 以及学习多渠道打包发布apk。
@@ -79,19 +77,24 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private ImageView ivPlayBarNext;
     @Bind(R.id.pb_play_bar)
     private ProgressBar mProgressBar;
+    // 天气view
     private View vNavigationHeader;
     private LocalMusicFragment mLocalMusicFragment;
+    // 在线音乐列表
     private SongListFragment mSongListFragment;
+    // 改PlayFragment 为activity
+//    private PlayActivity mPlayActivity;
     private PlayFragment mPlayFragment;
     private AudioManager mAudioManager;
     private ComponentName mRemoteReceiver;
     private boolean isPlayFragmentShow = false;
     private MenuItem timerItem;
+    private long time = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_music);
 
         if (!checkServiceAlive()) {
             return;
@@ -103,6 +106,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
         updateWeather();
         registerReceiver();
         onChange(getPlayService().getPlayingMusic());
+        // 显示playFragment
         parseIntent();
     }
 
@@ -167,6 +171,7 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     private void parseIntent() {
         Intent intent = getIntent();
         if (intent.hasExtra(Extras.EXTRA_NOTIFICATION)) {
+
             showPlayingFragment();
             setIntent(new Intent());
         }
@@ -249,13 +254,14 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case R.id.fl_play_bar:
                 // 显示播放fragment
+                // 进入PlayActivity
+//                startActivity(new Intent(MusicActivity.this, PlayActivity.class));
                 showPlayingFragment();
                 break;
             case R.id.iv_play_bar_play:
                 play();
                 break;
             case R.id.iv_play_bar_next:
-
                 next();
                 break;
         }
@@ -369,6 +375,26 @@ public class MusicActivity extends BaseActivity implements View.OnClickListener,
     protected void onSaveInstanceState(Bundle outState) {
         // 切换夜间模式不保存状态
     }
+
+//    /**
+//     * 双击返回桌面
+//     */
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if ((System.currentTimeMillis() - time > 1000)) {
+//                Toast.makeText(this, "再按一次返回桌面", Toast.LENGTH_SHORT).show();
+//                time = System.currentTimeMillis();
+//            } else {
+//                finish();
+//            }
+//            return true;
+//        } else {
+//            return super.onKeyDown(keyCode, event);
+//        }
+//
+//    }
+
 
     @Override
     protected void onDestroy() {

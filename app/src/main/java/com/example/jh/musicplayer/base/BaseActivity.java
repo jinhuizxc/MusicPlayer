@@ -68,7 +68,8 @@ public class BaseActivity extends AppCompatActivity {
         initView();
     }
 
-    private void initView() {
+    protected void initView() {
+        // 绑定view，加注解！
         ViewBinder.bind(this);
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);

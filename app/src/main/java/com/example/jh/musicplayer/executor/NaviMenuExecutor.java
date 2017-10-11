@@ -52,6 +52,7 @@ public class NaviMenuExecutor {
         return false;
     }
 
+    // 不在activity里面实现界面的跳转
     private static void startActivity(Context context, Class<?> cls) {
         Intent intent = new Intent(context, cls);
         context.startActivity(intent);

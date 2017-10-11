@@ -29,6 +29,7 @@ public class MusicApplication extends Application {
         AppCache.init(this);
         // 更新夜间主题
         AppCache.updateNightMode(Preferences.isNightMode());
+        // 初始化
         initOkHttpUtils();
         initBugly();
     }

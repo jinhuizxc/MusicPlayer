@@ -8,6 +8,7 @@ package com.example.jh.musicplayer.model;
  */
 
 public class Music {
+
     // 歌曲类型:本地/网络
     private Type type;
     // [本地歌曲]歌曲id
@@ -119,4 +120,6 @@ public class Music {
         }
         return this.getId() == ((Music)obj).getId();
     }
+
+
 }

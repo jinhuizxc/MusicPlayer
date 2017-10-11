@@ -42,6 +42,7 @@ import java.io.File;
  */
 
 public class LocalMusicFragment extends BaseFragment implements AdapterView.OnItemClickListener, OnMoreClickListener {
+
     private static final int REQUEST_WRITE_SETTINGS = 1;
     @Bind(R.id.lv_local_music)
     private ListView lvLocalMusic;

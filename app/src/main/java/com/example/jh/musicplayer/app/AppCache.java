@@ -25,31 +25,37 @@ import java.util.List;
  * Created by jinhui on 2017/6/7.
  * 邮箱: 1004260403@qq.com
  *
- * 音乐缓存类
+ * App——缓存类
  */
 
 public class AppCache {
 
+    private static final String TAG = "AppCache";
     private Context mContext;
+    // 音乐服务
     private PlayService mPlayService;
     // 本地歌曲列表
     private final List<Music> mMusicList = new ArrayList<>();
     // 歌单列表
     private final List<SongListInfo> mSongListInfos = new ArrayList<>();
+    // Activity链表
     private final List<Activity> mActivityStack = new ArrayList<>();
+    // 下载链表
     private final LongSparseArray<String> mDownloadList = new LongSparseArray<>();
+    // 高德地图
     private AMapLocalWeatherLive mAMapLocalWeatherLive;
 
     public AppCache() {
     }
     // 单例模式
-    private static class SingletonHolder{
-        private static AppCache sAppCache = new AppCache();
-    }
     private static AppCache getInstance(){
         return  SingletonHolder.sAppCache;
     }
+    private static class SingletonHolder{
+        private static AppCache sAppCache = new AppCache();
+    }
 
+    // 初始化
     public static void init(Application application) {
         getInstance().onInit(application);
     }
@@ -60,6 +66,7 @@ public class AppCache {
         Preferences.init(mContext);
         ScreenUtils.init(mContext);
         CrashHandler.getInstance().init();
+        // app注册生命周期的回调方法
         application.registerActivityLifecycleCallbacks(new ActivityLifecycle());
     }
 
@@ -68,7 +75,7 @@ public class AppCache {
     }
 
     public static PlayService getPlayService() {
-        return getInstance().mPlayService;
+        return getInstance().mPlayService;   // 返回null
     }
 
     public static void setPlayService(PlayService service) {
@@ -93,6 +100,7 @@ public class AppCache {
         return getInstance().mSongListInfos;
     }
 
+    // 清理Activity栈
     public static void clearStack() {
         List<Activity> activityStack = getInstance().mActivityStack;
         for (int i = activityStack.size() - 1; i >= 0; i--) {
@@ -119,8 +127,10 @@ public class AppCache {
 
     // ActivityLifecycle
     private static class ActivityLifecycle implements Application.ActivityLifecycleCallbacks {
+
         private static final String TAG = "Activity";
 
+        // 实现其回调的7个方法
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
             Log.i(TAG, "onCreate: " + activity.getClass().getSimpleName());
@@ -152,5 +162,7 @@ public class AppCache {
             Log.i(TAG, "onDestroy: " + activity.getClass().getSimpleName());
             getInstance().mActivityStack.remove(activity);
         }
+
     }
+
 }

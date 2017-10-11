@@ -52,6 +52,7 @@ import me.wcy.lrcview.LrcView;
 
 public class PlayFragment extends BaseFragment implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SeekBar.OnSeekBarChangeListener {
+
     @Bind(R.id.ll_content)
     private LinearLayout llContent;
     @Bind(R.id.iv_play_page_bg)
@@ -213,6 +214,7 @@ public class PlayFragment extends BaseFragment implements View.OnClickListener,
                 switchPlayMode();
                 break;
             case R.id.iv_play:
+                // 开始播放
                 play();
                 break;
             case R.id.iv_next:

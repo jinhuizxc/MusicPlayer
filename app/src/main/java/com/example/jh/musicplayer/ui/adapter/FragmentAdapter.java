@@ -20,7 +20,7 @@ public class FragmentAdapter extends FragmentPagerAdapter {
     public FragmentAdapter(FragmentManager fm) {
         super(fm);
     }
-
+    // 添加fragment
     public void addFragment(Fragment fragment) {
         mFragments.add(fragment);
     }

@@ -26,6 +26,7 @@ import com.example.jh.musicplayer.utils.binding.ViewBinder;
  */
 
 public class LocalMusicAdapter extends BaseAdapter {
+
     private OnMoreClickListener mListener;
     private int mPlayingPosition;
 
@@ -60,6 +61,7 @@ public class LocalMusicAdapter extends BaseAdapter {
             holder.vPlaying.setVisibility(View.INVISIBLE);
         }
         Music music = AppCache.getMusicList().get(position);
+        // 封面
         Bitmap cover = CoverLoader.getInstance().loadThumbnail(music);
         holder.ivCover.setImageBitmap(cover);
         holder.tvTitle.setText(music.getTitle());
@@ -73,6 +75,7 @@ public class LocalMusicAdapter extends BaseAdapter {
                 }
             }
         });
+        // 分割线
         holder.vDivider.setVisibility(isShowDivider(position) ? View.VISIBLE : View.GONE);
         return convertView;
     }
@@ -81,6 +84,7 @@ public class LocalMusicAdapter extends BaseAdapter {
         return position != AppCache.getMusicList().size() - 1;
     }
 
+    // 更新播放位置
     public void updatePlayingPosition(PlayService playService) {
         if (playService.getPlayingMusic() != null && playService.getPlayingMusic().getType() == Type.LOCAL) {
             mPlayingPosition = playService.getPlayingPosition();

@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 /**
  * Created by jinhui on 2017/6/8.
  * 邮箱: 1004260403@qq.com
+ *
+ * KeyStore类
  */
 
 public class KeyStore {

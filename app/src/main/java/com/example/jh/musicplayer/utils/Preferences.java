@@ -16,6 +16,7 @@ import com.example.jh.musicplayer.R;
 
 public class Preferences {
 
+    // 属性：音乐id、播放模式，开机页链接、夜间模式
     private static final String MUSIC_ID = "music_id";
     private static final String PLAY_MODE = "play_mode";
     private static final String SPLASH_URL = "splash_url";

@@ -91,6 +91,7 @@ public class PermissionReq {
         return this;
     }
 
+    // 请求
     public void request() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             if (mResult != null) {
@@ -112,15 +113,16 @@ public class PermissionReq {
             return;
         }
 
+        // 请求码
         int requestCode = genRequestCode();
         String[] deniedPermissions = deniedPermissionList.toArray(new String[deniedPermissionList.size()]);
+        // 请求权限
         requestPermissions(mObject, deniedPermissions, requestCode);
         sResultArray.put(requestCode, mResult);
     }
 
     public static void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         PermissionResult result = sResultArray.get(requestCode);
-
         if (result == null) {
             return;
         }

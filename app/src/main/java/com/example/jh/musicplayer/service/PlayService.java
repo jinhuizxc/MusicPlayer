@@ -42,6 +42,7 @@ public class PlayService extends Service implements MediaPlayer.OnCompletionList
     private static final int STATE_PREPARING = 1;
     private static final int STATE_PLAYING = 2;
     private static final int STATE_PAUSE = 3;
+    // 音乐列表
     private List<Music> mMusicList;
     private MediaPlayer mPlayer = new MediaPlayer();
     private IntentFilter mNoisyFilter = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
@@ -67,7 +68,7 @@ public class PlayService extends Service implements MediaPlayer.OnCompletionList
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG, "onCreate: " + getClass().getSimpleName());
+        Log.e(TAG, "onCreate: " + getClass().getSimpleName());
         mMusicList = AppCache.getMusicList();
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mPlayer.setOnCompletionListener(this);
@@ -87,6 +88,7 @@ public class PlayService extends Service implements MediaPlayer.OnCompletionList
     }
 
     public static void startCommand(Context context, String action) {
+        Log.e(TAG, "startCommand");
         Intent intent = new Intent(context, PlayService.class);
         intent.setAction(action);
         context.startService(intent);
@@ -117,6 +119,7 @@ public class PlayService extends Service implements MediaPlayer.OnCompletionList
     public void updateMusicList() {
         MusicUtils.scanMusic(this, mMusicList);
         if (!mMusicList.isEmpty()) {
+            // 更新播放位置
             updatePlayingPosition();
             mPlayingMusic = (mPlayingMusic == null) ? mMusicList.get(mPlayingPosition) : mPlayingMusic;
         }
@@ -406,6 +409,7 @@ public class PlayService extends Service implements MediaPlayer.OnCompletionList
         mPlayer = null;
         Notifier.cancelAll();
         AppCache.setPlayService(null);
+        // 停止服务
         stopSelf();
     }
 

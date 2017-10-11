@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 
 public class SongListInfo implements Serializable {
+
     private String title;
     /**
      * #主打榜单

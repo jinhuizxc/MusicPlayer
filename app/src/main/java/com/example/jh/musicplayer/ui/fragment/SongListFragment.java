@@ -49,6 +49,7 @@ public class SongListFragment extends BaseFragment implements AdapterView.OnItem
 
     @Override
     protected void init() {
+        // 初始化网络
         if (!NetworkUtils.isNetworkAvailable(getContext())) {
             ViewUtils.changeViewState(lvSongList, llLoading, llLoadFail, LoadStateEnum.LOAD_FAIL);
             return;

@@ -6,6 +6,7 @@ import android.view.WindowManager;
 /**
  * Created by jinhui on 2017/6/7.
  * 邮箱: 1004260403@qq.com
+ *
  *  屏幕尺寸工具类
  */
 

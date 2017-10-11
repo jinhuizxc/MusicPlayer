@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,11 +41,13 @@ import java.util.Calendar;
 public class SplashActivity extends BaseActivity {
 
     private static final String SPLASH_FILE_NAME = "splash";
+    private static final String TAG = "SplashActivity";
 
     @Bind(R.id.iv_splash)
     private ImageView ivSplash;
     @Bind(R.id.tv_copyright)
     private TextView tvCopyright;
+    // 服务连接对象
     private ServiceConnection mPlayServiceConnection;
 
     @Override
@@ -53,7 +56,7 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
 
         int year = Calendar.getInstance().get(Calendar.YEAR);
-        tvCopyright.setText(getString(R.string.copyright, year));
+        tvCopyright.setText(getString(R.string.copyright, year));//  Copyright © 2015&#045;%d SWUST
         // 开始音乐服务
         checkService();
     }
@@ -80,7 +83,7 @@ public class SplashActivity extends BaseActivity {
     // 开始音乐服务
     private void startService() {
         Intent intent = new Intent(this, PlayService.class);
-        startService(intent);
+        startService(intent);   // intent = Intent { cmp=com.example.jh.musicplayer/.service.PlayService }
     }
 
     // 绑定服务
@@ -106,6 +109,7 @@ public class SplashActivity extends BaseActivity {
                     .result(new PermissionResult() {
                         @Override
                         public void onGranted() {
+                            // 扫描音乐
                             scanMusic(playService);
                         }
 
@@ -128,7 +132,7 @@ public class SplashActivity extends BaseActivity {
     private void showSplash() {
         File splashImg = new File(FileUtils.getSplashDir(this), SPLASH_FILE_NAME);
         if (splashImg.exists()) {
-            Bitmap bitmap = BitmapFactory.decodeFile(splashImg.getPath());
+            Bitmap bitmap = BitmapFactory.decodeFile(splashImg.getPath()); //  splashImg.getPath() = /data/user/0/com.example.jh.musicplayer/files/splash/splash
             ivSplash.setImageBitmap(bitmap);
         }
     }
@@ -140,18 +144,19 @@ public class SplashActivity extends BaseActivity {
                 if (response == null || TextUtils.isEmpty(response.getUrl())) {
                     return;
                 }
-
                 final String url = response.getUrl();
+                Log.e(TAG, "url 000000000 = " + url);
+                // 如果最后一张url与保存的相同则返回。
                 String lastImgUrl = Preferences.getSplashUrl();
                 if (TextUtils.equals(lastImgUrl, url)) {
                     return;
                 }
-
                 HttpClient.downloadFile(url, FileUtils.getSplashDir(AppCache.getContext()), SPLASH_FILE_NAME,
                         new HttpCallback<File>() {
                             @Override
                             public void onSuccess(File file) {
                                 Preferences.saveSplashUrl(url);
+                                Log.e(TAG, "url 000000000 = " + url);
                             }
 
                             @Override
@@ -171,7 +176,7 @@ public class SplashActivity extends BaseActivity {
 
     // 扫描音乐
     public void scanMusic(final PlayService playService){
-        // 执行异步任务
+        // 执行异步任务，这步属于耗时操作
         new AsyncTask<Void, Void, Void>() {
 
             @Override
@@ -203,9 +208,9 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mPlayServiceConnection != null) {
             unbindService(mPlayServiceConnection);
         }
-        super.onDestroy();
     }
 }

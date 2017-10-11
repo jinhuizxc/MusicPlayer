@@ -73,6 +73,7 @@ public class MusicUtils {
         cursor.close();
     }
 
+
     private static String getCoverPath(Context context, long albumId) {
         String path = null;
         Cursor cursor = context.getContentResolver().query(

@@ -3,6 +3,7 @@ package com.example.jh.musicplayer.utils;
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.jh.musicplayer.R;
 import com.example.jh.musicplayer.app.AppCache;
@@ -27,6 +28,7 @@ public class FileUtils {
 
     private static final String MP3 = ".mp3";
     private static final String LRC = ".lrc";
+    private static final String TAG = "FileUtils";
 
     private static String getAppDir() {
         return Environment.getExternalStorageDirectory() + "/PonyMusic";
@@ -54,6 +56,7 @@ public class FileUtils {
 
     public static String getSplashDir(Context context) {
         String dir = context.getFilesDir() + "/splash/";
+        Log.e(TAG, "context.getFilesDir() =" + context.getFilesDir());
         return mkdirs(dir);
     }
 
@@ -72,7 +75,6 @@ public class FileUtils {
         if (music == null) {
             return null;
         }
-
         String lrcFilePath = getLrcDir() + getLrcFileName(music.getArtist(), music.getTitle());
         if (!exists(lrcFilePath)) {
             lrcFilePath = music.getPath().replace(MP3, LRC);
