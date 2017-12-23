@@ -45,6 +45,7 @@ import com.example.jh.musicplayer.utils.permission.PermissionResult;
 
 /**
  * 打造一款音乐播放器，借鉴ponyMusic, 以及学习多渠道打包发布apk。
+ * test
  */
 public class MusicActivity extends BaseActivity implements View.OnClickListener, OnPlayerEventListener,
         NavigationView.OnNavigationItemSelectedListener, ViewPager.OnPageChangeListener {
